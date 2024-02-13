@@ -15,6 +15,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='user/', verbose_name='аватар', **NULLABLE)
 
     USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
