@@ -4,10 +4,16 @@ from materials.models import Course, Lesson
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    count_lessons = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Course
         # fields = '__all__'
         fields = ('title', 'description',)
+
+    @staticmethod
+    def get_count_lessons(course):
+        return Lesson.objects.filter(course=course).count()
 
 
 class LessonSerializer(serializers.ModelSerializer):
