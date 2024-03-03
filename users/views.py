@@ -4,6 +4,7 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 
 from users.models import Payment, User
+from users.permissions import IsStaff
 from users.serializers import PaymentSerializer, UserSerializer
 
 
@@ -18,7 +19,7 @@ class PaymentListAPIView(generics.ListAPIView):
 class UserListAPIView(generics.ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaff]
 
 
 class UserCreateAPIView(generics.CreateAPIView):
@@ -34,7 +35,7 @@ class UserCreateAPIView(generics.CreateAPIView):
 class UserRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsStaff]
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
