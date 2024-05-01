@@ -1,14 +1,19 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from materials.paginations import LessonPagination, CoursePagination
 from materials.permissions import IsStaff, IsOwner
-from materials.models import Course, Lesson
-from materials.serializers import CourseSerializer, LessonSerializer
+from materials.models import Course, Lesson, Subscription
+from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = CoursePagination
 
     def get_permissions(self):
         if self.action == 'create':
@@ -43,6 +48,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner | IsStaff]
+    pagination_class = LessonPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -60,3 +66,32 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsOwner]
+
+
+class SubscriptionView(APIView):
+    # serializer_class = SubscriptionSerializer
+    # queryset = Subscription.objects.all()
+
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data['course']
+        course_item = get_object_or_404(Course, id=course_id)
+
+        subs_item, created = Subscription.objects.update_or_create(course=course_item, user=user)
+
+        if created:
+            subs_item.status = True
+            subs_item.save()
+            message = 'подписка добавлена'
+        # Если подписка у пользователя на этот курс есть - удаляем ее
+        elif subs_item.status:
+            subs_item.status = False
+            subs_item.save()
+            message = 'подписка удалена'
+        # Если подписки у пользователя на этот курс нет - создаем ее
+        else:
+            subs_item.status = True
+            subs_item.save()
+            message = 'подписка добавлена'
+        # Возвращаем ответ в API
+        return Response({"message": message})
