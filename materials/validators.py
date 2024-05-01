@@ -1,6 +1,6 @@
 from rest_framework.serializers import ValidationError
 
-allowed_video_link = ['youtube']
+allowed_video_link = 'youtube'
 
 
 class VideoLinkValidator:

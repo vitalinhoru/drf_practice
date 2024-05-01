@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from materials.paginations import LessonPagination, CoursePagination
 from materials.permissions import IsStaff, IsOwner
 from materials.models import Course, Lesson, Subscription
-from materials.serializers import CourseSerializer, LessonSerializer
+from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -69,16 +69,22 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 
 class SubscriptionView(APIView):
+    # serializer_class = SubscriptionSerializer
+    # queryset = Subscription.objects.all()
 
     def post(self, *args, **kwargs):
-        user = self.requests.user
-        course_id = self.reqests.data['course']
+        user = self.request.user
+        course_id = self.request.data['course']
         course_item = get_object_or_404(Course, id=course_id)
 
-        subs_item = Subscription.objects.update_or_create(course=course_item, user=user)
+        subs_item, created = Subscription.objects.update_or_create(course=course_item, user=user)
 
+        if created:
+            subs_item.status = True
+            subs_item.save()
+            message = 'подписка добавлена'
         # Если подписка у пользователя на этот курс есть - удаляем ее
-        if subs_item.status:
+        elif subs_item.status:
             subs_item.status = False
             subs_item.save()
             message = 'подписка удалена'

@@ -7,8 +7,8 @@ from materials.validators import VideoLinkValidator
 class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
-        # fields = '__all__'
-        fields = ('title', 'description', 'course', 'video_link',)
+        fields = '__all__'
+        # fields = ('title', 'description', 'course', 'video_link',)
         validators = [VideoLinkValidator(field='video_link')]
 
 
