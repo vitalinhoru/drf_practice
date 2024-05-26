@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'django_filters',
+    'drf_yasg',
 
     'users',
     'materials',
@@ -141,3 +142,14 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://read-only.example.com",
+    "https://read-and-write.example.com",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://read-and-write.example.com",
+]
+
+STRIPE_API_KEY = 'sk_test_51PKkSuEUdmxqxF6D39lORfgIDhJONv5Qe83f1CyvPfaSSYNeBUmdTyqlrUd6tGErKfs6sEdDKu0yxZq3EDMJX4R000VxDeD6FF'

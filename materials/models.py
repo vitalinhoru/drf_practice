@@ -10,6 +10,7 @@ class Course(models.Model):
     description = models.TextField(verbose_name='описание')
     avatar = models.ImageField(verbose_name='превью', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, **NULLABLE)
+    amount = models.IntegerField(default=1000, verbose_name='цена')
 
     def __str__(self):
         return self.title

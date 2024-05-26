@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, generics, serializers
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -8,6 +8,9 @@ from materials.paginations import LessonPagination, CoursePagination
 from materials.permissions import IsStaff, IsOwner
 from materials.models import Course, Lesson, Subscription
 from materials.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
+from materials.services import create_stripe_price, create_stripe_session
+from users.models import Payment
+from users.serializers import PaymentSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -95,3 +98,23 @@ class SubscriptionView(APIView):
             message = 'подписка добавлена'
         # Возвращаем ответ в API
         return Response({"message": message})
+
+
+class PaymentCreateView(generics.CreateAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        course = serializer.validated_data.get('paid_course')
+
+        if not course:
+            raise serializers.ValidationError('Укажите курс')
+        payment = serializer.save()
+
+        if course.price != payment.payment_amount:
+            raise serializers.ValidationError('Укажите верную цену курса')
+
+        stripe_price_id = create_stripe_price(payment)
+        payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
+        payment.save()
