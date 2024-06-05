@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'drf_yasg',
+    'django_celery_beat',
 
     'users',
     'materials',
@@ -153,3 +154,18 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 STRIPE_API_KEY = 'sk_test_51PKkSuEUdmxqxF6D39lORfgIDhJONv5Qe83f1CyvPfaSSYNeBUmdTyqlrUd6tGErKfs6sEdDKu0yxZq3EDMJX4R000VxDeD6FF'
+
+# URL-адрес брокера сообщений
+CELERY_BROKER_URL = os.getenv('REDIS')  # Например, Redis, который по умолчанию работает на порту 6379
+
+# URL-адрес брокера результатов, также Redis
+CELERY_RESULT_BACKEND = os.getenv('REDIS')
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "UTC"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
