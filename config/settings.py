@@ -155,6 +155,17 @@ CSRF_TRUSTED_ORIGINS = [
 
 STRIPE_API_KEY = 'sk_test_51PKkSuEUdmxqxF6D39lORfgIDhJONv5Qe83f1CyvPfaSSYNeBUmdTyqlrUd6tGErKfs6sEdDKu0yxZq3EDMJX4R000VxDeD6FF'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_ADMIN = EMAIL_HOST_USER
+
+
 # URL-адрес брокера сообщений
 CELERY_BROKER_URL = os.getenv('REDIS')  # Например, Redis, который по умолчанию работает на порту 6379
 
@@ -162,7 +173,7 @@ CELERY_BROKER_URL = os.getenv('REDIS')  # Например, Redis, которы�
 CELERY_RESULT_BACKEND = os.getenv('REDIS')
 
 # Часовой пояс для работы Celery
-CELERY_TIMEZONE = "UTC"
+CELERY_TIMEZONE = "W-SU"
 
 # Флаг отслеживания выполнения задач
 CELERY_TASK_TRACK_STARTED = True

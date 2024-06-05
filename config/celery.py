@@ -1,10 +1,10 @@
 import os
-import eventlet
+#import eventlet
 
 from celery import Celery
 
 
-eventlet.monkey_patch()
+#eventlet.monkey_patch()
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
